@@ -1,0 +1,1240 @@
+<!doctype html>
+<html lang="en" class="intro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="TUOTUO's creative portfolio of games, websites, and interactive hardware." />
+    <title>TUOTUO — Creative Portfolio</title>
+    <script>
+      try {
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.remove("intro");
+        if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+      } catch (_) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #1A1A1E;
+        --slate: #7C819B;
+        --slate-soft: #8B90A8;
+        --nav-h: 88px;
+        --card-gap: 24px;
+        --card-r: 16px;
+        --pad: 24px;
+        --r-btn: 8px;
+        --r-card: 12px;
+        --inset-x: 24px;
+        --inset-t: 96px;
+        --radius: 16px;
+        --nav-ink: #1A1A1E;
+        --nav-accent: #8B90A8;
+        --nav-icon: #7C819B;
+        --pill-bg: #7C819B;
+        --pill-ink: #FFFFFF;
+        --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+      }
+
+      * { box-sizing: border-box; }
+      html { min-width: 320px; background: #fff; scroll-behavior: auto; }
+      body {
+        margin: 0;
+        background: #fff;
+        color: var(--ink);
+        font-family: var(--sans);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overscroll-behavior-y: none;
+      }
+      button, a { font: inherit; }
+      button { color: inherit; }
+      a { color: inherit; text-decoration: none; }
+      button:focus-visible, a:focus-visible { outline: 2px solid #d8e980; outline-offset: 4px; }
+
+      .stage { 
+        position: fixed;
+        z-index: 0;
+        top: var(--inset-t);
+        right: var(--inset-x);
+        bottom: 0;
+        left: var(--inset-x);
+        overflow: hidden;
+        border-radius: var(--radius) var(--radius) 0 0;
+        background: #303642;
+      }
+      .stage::before, .stage::after { position: absolute; content: ""; pointer-events: none; }
+      .stage::before { inset: 12% 8%; border: 1px solid rgba(255,255,255,.14); border-radius: 50%; transform: rotate(-9deg); }
+      .stage::after { top: 18%; right: 10%; width: 19%; height: 1px; background: rgba(255,255,255,.45); }
+      .hardware-model-slot { position: relative; display: block; flex: none; height: clamp(136px, 17vh, 174px); margin: -7px -7px 10px; overflow: hidden; border: 1px solid rgba(255,255,255,.16); border-radius: 8px; background: #343a46; }
+      #hardware3d { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
+      #hardware3d:active { cursor: grabbing; }
+      #ink-canvas { position: fixed; z-index: 30; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; opacity: 0; }
+      .ink-word { position: relative; display: inline-block; white-space: nowrap; }
+      .ink-letter { display: inline-block; transform-origin: 50% 58%; }
+      @media (hover: hover) and (pointer: fine) {
+        .gravity-active .stage, .gravity-active .scenes, .gravity-active .scenes * { cursor: none; }
+        .gravity-active #hardware3d { cursor: grab; }
+        .gravity-active #hardware3d:active { cursor: grabbing; }
+      }
+      .scrim { position: absolute; z-index: 1; inset: 0; pointer-events: none; }
+      .scrim.top { background: linear-gradient(to bottom, rgba(32,36,50,.30) 0%, rgba(32,36,50,.08) 26%, rgba(32,36,50,0) 46%); }
+      .scrim.bottom { background: linear-gradient(to top, rgba(32,36,50,.40) 0%, rgba(32,36,50,.12) 30%, rgba(32,36,50,0) 56%); }
+
+      .nav {
+        position: fixed;
+        z-index: 40;
+        top: 0;
+        right: 0;
+        left: 0;
+        min-height: var(--nav-h);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 clamp(18px, 2vw, 26px);
+        padding-top: env(safe-area-inset-top);
+        background: transparent;
+        transition: none;
+      }
+      .logo { color: var(--nav-ink); font-size: 20px; font-weight: 400; letter-spacing: 0; white-space: nowrap; }
+      .logo span { color: var(--nav-accent); }
+      .nav-right { display: flex; align-items: center; gap: clamp(14px, 1.8vw, 26px); }
+      .pill {
+        padding: 11px 21px;
+        border: 0;
+        border-radius: var(--r-btn);
+        color: var(--pill-ink);
+        background: var(--pill-bg);
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 0;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: filter .25s ease, transform .25s ease;
+      }
+      .pill:hover { filter: brightness(.94); transform: translateY(-1px); }
+      .lang-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 72px; padding: 10px 12px; border: 1px solid rgba(124,129,155,.38); border-radius: 999px; color: var(--nav-ink); background: transparent; font-size: 12px; line-height: 1; white-space: nowrap; cursor: pointer; transition: border-color .25s ease, background .25s ease, transform .25s ease; }
+      .lang-option { opacity: .45; }
+      [data-lang="en"] .lang-option[data-language="en"], [data-lang="zh"] .lang-option[data-language="zh"] { opacity: 1; font-weight: 600; }
+      .lang-divider { opacity: .3; }
+      .lang-toggle:hover { border-color: var(--nav-ink); background: rgba(255,255,255,.18); transform: translateY(-1px); }
+      .menu {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        padding: 6px 2px;
+        border: 0;
+        color: var(--nav-ink);
+        background: none;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+      }
+      .menu-grid { display: grid; grid-template-columns: repeat(2, 10px); gap: 3px; }
+      .menu-grid i { display: block; width: 10px; height: 10px; border-radius: 2.5px; background: var(--nav-icon); }
+
+      .scenes { position: fixed; z-index: 20; inset: 0; pointer-events: none; }
+      .scene { position: absolute; display: flex; flex-direction: column; pointer-events: none; }
+      .scene > * { pointer-events: auto; }
+      #scene1 { top: calc(var(--inset-t) + var(--pad) + 6px); right: calc(var(--inset-x) + var(--pad)); bottom: var(--pad); left: calc(var(--inset-x) + var(--pad)); }
+      #scene2 { top: calc(var(--nav-h) + var(--pad)); right: var(--pad); bottom: 0; left: var(--pad); }
+      .micro-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 28px; }
+      .micro { max-width: 26ch; color: rgba(255,255,255,.9); font-size: 13px; line-height: 1.48; font-weight: 400; }
+      .micro p { margin: 0; }
+      .micro p + p { margin-top: 14px; }
+      .micro.right { max-width: 34ch; }
+      .micro.right p { text-align: right; }
+      .micro-kicker { color: rgba(255,255,255,.68); font: 10px var(--sans); letter-spacing: .08em; }
+      .micro-strong { color: #fff; }
+      .headline { min-width: 0; }
+      .h-line1 { margin: 0; color: #fff; font-size: 3.5rem; line-height: 1.02; font-weight: 300; letter-spacing: 0; }
+      .h-line2 { margin: .02em 0 0; color: #fff; font-family: var(--serif); font-size: 4rem; font-style: italic; font-weight: 400; line-height: 1.04; letter-spacing: 0; }
+      .hero-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: clamp(24px, 4vw, 64px); margin-top: auto; }
+      .hero-center-english { position: absolute; top: 49%; left: 50%; width: min(76vw, 820px); transform: translate(-50%, -58%); color: #fff; text-align: center; pointer-events: none; }
+      [data-lang="zh"] .hero-center-english { width: min(78vw, 820px); }
+      [data-lang="zh"] .hero-center-english strong { font-family: var(--sans); font-size: 5.3rem; }
+      [data-lang="zh"] .hero-center-english em { font-family: var(--sans); font-size: 4rem; font-style: normal; font-weight: 300; }
+      .hero-center-english .center-kicker { display: block; margin-bottom: 17px; color: rgba(255,255,255,.72); font: 10px var(--sans); letter-spacing: .22em; white-space: nowrap; }
+      .hero-center-english .center-kicker::before, .hero-center-english .center-kicker::after { display: inline-block; width: 26px; height: 1px; margin: 0 12px; content: ""; vertical-align: middle; background: rgba(255,255,255,.38); }
+      .hero-center-english strong { display: block; font: 300 6rem/.98 var(--sans); letter-spacing: 0; }
+      .hero-center-english em { display: block; margin-top: 9px; font: 400 italic 5.6rem/1 var(--serif); letter-spacing: 0; }
+      .hero-center-english .center-meta { display: flex; justify-content: center; gap: 14px; margin-top: 24px; color: rgba(255,255,255,.62); font: 9px var(--sans); letter-spacing: .12em; }
+      .hero-center-english .center-meta i { width: 3px; height: 3px; margin-top: 4px; border-radius: 50%; background: #d6f178; }
+      .cta-row { display: flex; flex-wrap: wrap; gap: 10px; padding-bottom: 4px; }
+      .btn {
+        padding: 11px 21px;
+        border: 1px solid transparent;
+        border-radius: var(--r-btn);
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 0;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: transform .25s ease, background .25s ease, border-color .25s ease;
+      }
+      .btn:hover { transform: translateY(-1px); }
+      .btn-solid { border-color: #fff; color: var(--ink); background: #fff; }
+      .btn-solid:hover { background: #F1F2F6; }
+      .btn-ghost { border-color: rgba(255,255,255,.55); color: #fff; background: rgba(255,255,255,.08); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+      .btn-ghost:hover { background: rgba(255,255,255,.2); }
+
+      #scene1 .micro-row { margin-top: 5px; }
+      #scene1 .headline { max-width: 740px; }
+      #scene1 .h-line1 { font-family: var(--sans); font-size: 2.8rem; font-weight: 400; letter-spacing: 0; }
+      #scene1 .h-line2 { font-size: 3rem; }
+
+      #scene2 .micro-row { align-items: end; }
+      #scene2 .headline { max-width: 700px; }
+      #scene2 .h-line1, #scene2 .h-line2 { font-size: 3.3rem; }
+      .info { display: flex; align-items: flex-start; gap: 13px; max-width: 36ch; padding-bottom: 3px; }
+      .info-badge { flex: none; width: 22px; height: 22px; display: grid; place-items: center; margin-top: 2px; border-radius: 5px; color: var(--ink); background: #fff; font-family: var(--serif); font-size: 14px; font-style: italic; line-height: 1; }
+      .info p { margin: 0; color: rgba(255,255,255,.86); font-size: 13px; line-height: 1.55; }
+      .cards { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 16px); margin-top: auto; }
+      .card {
+        position: relative;
+        min-width: 0;
+        min-height: clamp(190px, 25vh, 232px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        padding: clamp(18px, 1.7vw, 24px);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: var(--r-card);
+        color: #fff;
+        text-align: left;
+        background: rgba(0,0,0,.2);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        cursor: pointer;
+        transition: background .3s ease, transform .3s ease, border-color .3s ease;
+      }
+      .card:hover { border-color: rgba(255,255,255,.24); background: rgba(0,0,0,.3); transform: translateY(-4px); }
+      .card-num { position: absolute; top: clamp(16px, 1.5vw, 22px); right: clamp(16px, 1.5vw, 22px); color: rgba(255,255,255,.62); font-size: 13px; letter-spacing: .02em; }
+      .card-visual { width: 100%; height: 52px; display: flex; align-items: center; margin-bottom: 0; }
+      .card-visual svg { display: block; width: 38px; height: 38px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .95; }
+      .card-visual img { display: block; width: min(100%, 150px); height: 52px; border: 1px solid rgba(255,255,255,.18); object-fit: cover; object-position: center 48%; }
+      .card-rule { width: 45%; height: 1px; flex: none; margin: clamp(16px, 1.6vw, 22px) 0 clamp(12px, 1.2vw, 17px); background: rgba(255,255,255,.24); }
+      .card-title { margin: 0; color: #fff; font-size: 18px; font-weight: 400; letter-spacing: 0; }
+      .card-body { margin: 12px 0 0; color: rgba(255,255,255,.8); font-size: 13px; line-height: 1.48; }
+      .hardware-card .card-body { margin-top: 8px; }
+
+      .track { position: relative; z-index: 1; height: 340vh; pointer-events: none; }
+      .project-dialog { width: min(500px, calc(100% - 32px)); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; padding: 36px; color: #fff; background: rgba(26,26,30,.94); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); }
+      .project-dialog::backdrop { background: rgba(13,15,21,.55); backdrop-filter: blur(5px); }
+      .dialog-close { position: absolute; top: 13px; right: 15px; width: 32px; height: 32px; border: 1px solid rgba(255,255,255,.32); border-radius: 50%; color: #fff; background: transparent; font-size: 22px; line-height: 1; cursor: pointer; }
+      .dialog-language { position: absolute; top: 13px; right: 59px; color: #fff; border-color: rgba(255,255,255,.25); }
+      .project-dialog { padding-top: 64px; }
+      [data-lang="zh"] .h-line2 { font-family: "Songti SC", "STSong", Georgia, serif; font-style: normal; }
+      [data-lang="zh"] .micro-kicker, [data-lang="zh"] .hero-center-english .center-kicker { letter-spacing: .12em; }
+      .dialog-kicker { color: #b9bfd0; font: 10px var(--sans); letter-spacing: .08em; }
+      .dialog-title { margin: 19px 0 12px; font: 500 28px/1.35 var(--sans); }
+      .dialog-description { margin: 0; color: rgba(255,255,255,.78); font: 14px/1.85 var(--sans); }
+      .dialog-index { display: flex; justify-content: space-between; margin-top: 31px; padding-top: 13px; border-top: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.56); font: 9px var(--sans); letter-spacing: .06em; }
+
+      @keyframes stageOpen { from { clip-path: inset(0 50% 0 50% round var(--radius) var(--radius) 0 0); } to { clip-path: inset(0 0 0 0 round var(--radius) var(--radius) 0 0); } }
+      @keyframes rvUp { from { opacity: 0; transform: translate3d(0,20px,0); } to { opacity: 1; transform: none; } }
+      @keyframes rvWipe { from { opacity: 0; clip-path: inset(-30% 100% -30% -4%); transform: translate3d(0,14px,0); } to { opacity: 1; clip-path: inset(-30% -30% -30% -4%); transform: none; } }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+      .intro .stage { clip-path: inset(0 50% 0 50% round var(--radius) var(--radius) 0 0); }
+      .intro .hero-center-english { opacity: 0; }
+      .intro .rv, .intro .rv-wipe { opacity: 0; }
+      .intro-go .stage { clip-path: none; animation: stageOpen 840ms cubic-bezier(.66,0,.24,1) backwards; }
+      .intro-go .hero-center-english { opacity: 1; animation: fadeIn 680ms ease 60ms backwards; }
+      .intro-go .rv { opacity: 1; animation: rvUp 720ms cubic-bezier(.22,.7,.2,1) backwards; animation-delay: var(--d,0ms); }
+      .intro-go .rv-wipe { opacity: 1; animation: rvWipe 820ms cubic-bezier(.22,.7,.2,1) backwards; animation-delay: var(--d,0ms); }
+
+      @media (max-width: 900px) {
+        :root { --nav-h: 64px; --card-gap: 12px; --card-r: 14px; --pad: 18px; }
+        .h-line1 { font-size: 3rem; }
+        .h-line2 { font-size: 3.1rem; }
+        #scene1 .h-line1 { font-size: 2.4rem; }
+        #scene1 .h-line2 { font-size: 2.5rem; }
+        #scene2 .h-line1, #scene2 .h-line2 { font-size: 2.8rem; }
+        .hero-center-english strong { font-size: 3.7rem; }
+        .hero-center-english em { font-size: 3.5rem; }
+        [data-lang="zh"] .hero-center-english strong { font-size: 3.2rem; }
+        [data-lang="zh"] .hero-center-english em { font-size: 2.6rem; }
+        .micro-row { flex-direction: column; gap: 14px; }
+        .micro, .micro.right { max-width: 46ch; }
+        .micro.right p { text-align: left; }
+        .hero-foot { flex-direction: column; align-items: flex-start; gap: 18px; }
+        #scene2 .micro-row { align-items: flex-start; }
+        .cards {
+          grid-template-columns: none;
+          grid-auto-flow: column;
+          grid-auto-columns: minmax(210px, 72vw);
+          gap: 10px;
+          overflow-x: auto;
+          overscroll-behavior-x: contain;
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+          margin: auto calc(var(--pad) * -1) 0;
+          padding: 0 var(--pad) 0;
+        }
+        .cards::-webkit-scrollbar { display: none; }
+        .card { scroll-snap-align: start; min-height: 168px; }
+      }
+      @media (max-width: 560px) {
+        .nav { padding-right: 14px; padding-left: 14px; }
+        .nav-right { gap: 8px; }
+        .logo { font-size: 18px; }
+        .lang-toggle { min-width: 64px; padding-right: 9px; padding-left: 9px; }
+        .h-line1 { font-size: 1.75rem; }
+        .h-line2 { font-size: 1.85rem; }
+        #scene1 .h-line1 { font-size: 1.5rem; }
+        #scene1 .h-line2 { font-size: 1.6rem; }
+        #scene2 .h-line1 { font-size: 1.75rem; }
+        #scene2 .h-line2 { font-size: 1.85rem; }
+        .hero-center-english strong { font-size: 1.7rem; }
+        .hero-center-english em { font-size: 1.8rem; }
+        [data-lang="zh"] .hero-center-english strong { font-size: 1.55rem; }
+        [data-lang="zh"] .hero-center-english em { font-size: 1.48rem; }
+        .micro { font-size: 12px; }
+        .micro.hide-sm { display: none; }
+        .card-rule { width: 60%; }
+        .btn { padding: 10px 17px; font-size: 13px; }
+        .pill { padding: 10px 12px; font-size: 13px; }
+        .menu > span:last-child { display: none; }
+        .menu-grid i { width: 9px; height: 9px; }
+      }
+      @media (max-height: 660px) {
+        .cards { gap: 8px; }
+        .card { min-height: clamp(132px, 23vh, 168px); padding: 14px; }
+        .card-rule { margin: 11px 0 9px; }
+        .card-body { font-size: 11.5px; line-height: 1.42; }
+        .card-visual { height: 34px; }
+        .card-visual img { height: 34px; }
+        .card-visual svg { width: 26px; height: 26px; }
+        .micro p + p { margin-top: 9px; }
+      }
+      @media (max-height: 520px) {
+        :root { --nav-h: 52px; --pad: 14px; }
+        .h-line1 { font-size: 1.5rem; }
+        .h-line2 { font-size: 1.6rem; }
+        .micro { font-size: 11.5px; line-height: 1.4; }
+        #scene2 .info { display: none; }
+        .micro.hide-sm { display: none; }
+        .card { min-height: 112px; padding: 12px; }
+        .card-ico { width: 18px; height: 18px; }
+        .card-rule { margin: 8px 0 7px; }
+        .card-num { top: 11px; right: 12px; font-size: 11.5px; }
+        .card-body { margin-top: 6px; }
+        .hardware-model-slot { height: 132px; }
+      }
+      @media (max-width: 360px) {
+        .nav .menu { display: none; }
+      }
+      @media (max-height: 520px) and (min-width: 561px) {
+        #scene1 .micro-row { display: none; }
+        .hero-center-english { top: 40%; transform: translate(-50%, -50%); }
+        .hero-center-english strong { font-size: 2.5rem; }
+        .hero-center-english em { font-size: 2.4rem; }
+        [data-lang="zh"] .hero-center-english strong { font-size: 2.2rem; }
+        [data-lang="zh"] .hero-center-english em { font-size: 1.9rem; }
+        .hero-center-english .center-kicker { margin-bottom: 9px; }
+        .hero-center-english .center-meta { margin-top: 12px; }
+        #scene1 .hero-foot { flex-direction: row; align-items: flex-end; }
+        #scene1 .h-line1 { font-size: 1.4rem; }
+        #scene1 .h-line2 { font-size: 1.5rem; }
+        #scene2 .h-line1, #scene2 .h-line2 { font-size: 1.6rem; }
+        .hardware-model-slot { height: 74px; }
+        .card-title { font-size: 16px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+      }
+
+      /* Real project photography and game captures. */
+      .card-visual { position: relative; height: clamp(96px, 13vh, 138px); flex: none; overflow: hidden; border-radius: 6px; background: rgba(255,255,255,.04); }
+      .card-visual img { width: 100%; max-width: none; height: 100%; border: 0; object-fit: cover; }
+      .hardware-card .card-visual img { object-position: center 45%; }
+      .hardware-card .hardware-model-slot { height: 76px; margin: 8px 0 0; }
+      .hardware-card .card-rule { margin-top: 12px; }
+      .card-num { z-index: 2; padding: 3px 6px; border-radius: 4px; background: rgba(15,17,23,.55); }
+      .project-dialog { width: min(920px, calc(100% - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+      .project-gallery { display: grid; gap: 16px; margin-top: 24px; }
+      .project-gallery figure { margin: 0; }
+      .project-gallery img { display: block; width: 100%; max-height: 65vh; object-fit: contain; border-radius: 8px; background: #111319; }
+      .project-gallery figcaption { margin-top: 8px; color: #bdc0ca; font: 12px/1.6 var(--sans); }
+      .project-gallery .gallery-note { margin: 0; padding: 20px; border: 1px dashed rgba(255,255,255,.25); border-radius: 8px; color: #bdc0ca; font: 13px/1.7 var(--sans); }
+      @media (max-height: 660px) { .card-visual { height: 76px; } .card-visual img { height: 100%; } .hardware-card .hardware-model-slot { height: 50px; } }
+      @media (max-width: 560px) { .card-visual { height: 126px; } .project-dialog { padding: 64px 20px 24px; } }
+      .personality-preview img { object-position: center 26%; }
+      .project-gallery[data-project="personality"] { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+      .project-gallery[data-project="personality"] img { max-height: none; height: auto; }
+      @media (max-width: 560px) { .project-gallery[data-project="personality"] { grid-template-columns: 1fr; } }
+      .project-tile { display: flex; flex-direction: column; min-width: 0; scroll-snap-align: start; }
+      .project-tile .card { flex: 1; width: 100%; }
+      .project-github { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; color: #e5e7ef; font: 12px var(--sans); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.2); }
+      .project-github:hover, .dialog-github:hover { color: #d6f1a0; }
+      .project-github:focus-visible, .dialog-github:focus-visible { outline: 2px solid #d6f1a0; outline-offset: 3px; }
+      .dialog-github { display: inline-block; margin-top: 18px; color: #d6f1a0; font: 13px var(--sans); }
+      @media (max-height: 660px) { .project-github { padding: 7px 12px; } }
+    </style>
+  </head>
+  <body>
+    <div class="stage" id="stage" aria-hidden="true">
+      <div class="scrim top"></div>
+      <div class="scrim bottom"></div>
+    </div>
+    <canvas id="ink-canvas" aria-hidden="true"></canvas>
+
+    <header class="nav rv" id="nav" style="--d:140ms">
+      <a class="logo" href="#top" aria-label="TUOTUO home">TUOTUO<span>.</span></a>
+      <nav class="nav-right" aria-label="Main navigation">
+        <button class="lang-toggle" id="lang-toggle" data-language-toggle type="button" aria-label="Switch to Chinese"><span class="lang-option" data-language="zh">中</span><span class="lang-divider" aria-hidden="true">/</span><span class="lang-option" data-language="en">EN</span></button>
+        <button class="pill" type="button" data-scroll-to=".86">View work</button>
+        <button class="menu" type="button" aria-label="Open selected works" title="View work" data-scroll-to=".86">
+          <span class="menu-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Menu</span>
+        </button>
+      </nav>
+    </header>
+
+    <div class="scenes">
+      <section class="scene" id="scene1" aria-labelledby="hero-title">
+        <div class="micro-row">
+          <div class="micro rv" style="--d:700ms">
+            <p class="micro-kicker" data-i18n="microKicker">CREATIVE PORTFOLIO / 2026</p>
+            <p class="micro-strong" data-i18n="microLeft">Games, websites &amp; one curious little object.</p>
+          </div>
+          <div class="micro right rv" style="--d:780ms">
+            <p data-i18n="microRight">A handmade character, a small screen and an object built to answer back.</p>
+          </div>
+        </div>
+        <div class="hero-center-english" aria-label="TUOTUO creative portfolio">
+          <span class="center-kicker" data-i18n="heroKicker">A PORTFOLIO BY TUOTUO</span>
+          <strong data-i18n="heroStrong">MAKE IT REAL.</strong>
+          <em data-i18n="heroEm">Make it yours.</em>
+          <span class="center-meta"><span data-i18n="metaGames">GAMES</span><i></i><span data-i18n="metaWebsites">WEBSITES</span><i></i><span data-i18n="metaHardware">HARDWARE</span></span>
+        </div>
+        <div class="hero-foot">
+          <div class="headline">
+            <h1 class="h-line1 rv-wipe" id="hero-title" style="--d:870ms" data-i18n="heroTitle">Ideas into worlds.</h1>
+            <p class="h-line2 rv-wipe" style="--d:1000ms" data-i18n="heroSubtitle">Made to be touched.</p>
+          </div>
+          <div class="cta-row">
+            <button class="btn btn-solid rv" type="button" style="--d:1280ms" data-scroll-to=".86" data-i18n="viewWork">VIEW WORK</button>
+            <button class="btn btn-ghost rv" type="button" style="--d:1360ms" data-project="hardware" data-i18n="openObject">OPEN OBJECT</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene" id="scene2" aria-labelledby="work-title">
+        <div class="micro-row">
+          <div class="headline">
+            <h2 class="h-line1" id="work-title" data-s2 data-i18n="workTitle">Different worlds.</h2>
+            <p class="h-line2" data-s2 data-i18n="workSubtitle">Same curiosity.</p>
+          </div>
+          <div class="info" data-s2>
+            <span class="info-badge" aria-hidden="true">i</span>
+            <p data-i18n="workInfo">From wasteland exploration to pixel action, personality tests and long-form reading; these projects trace my experiments across media.</p>
+          </div>
+        </div>
+
+        <div class="cards" aria-label="Selected works">
+          <div class="project-tile" data-s2><button class="card hardware-card" type="button" data-project="hardware" aria-label="Open Chat Box hardware project">
+            <span class="card-num">00</span>
+            <span class="card-visual"><img decoding="async" loading="lazy" src="assets/hardware-01.jpg" alt="Chat Box hardware photograph" data-project-photo="hardware" /></span>
+            <span class="hardware-model-slot" id="hardware3d-slot" aria-label="Draggable 3D model of the Chat Box"><canvas id="hardware3d"></canvas></span>
+            <span class="card-rule"></span>
+            <span class="card-title" data-i18n="cardHardwareTitle">Chat Box / Hardware</span>
+            <span class="card-body" data-i18n="cardHardwareBody">A small object that listens.</span>
+          </button><a class="project-github" href="https://github.com/tuotuo2014/chat-box" target="_blank" rel="noopener noreferrer" aria-label="GitHub · chat-box">GitHub <span aria-hidden="true">↗</span></a></div>
+          <div class="project-tile" data-s2><button class="card" type="button" data-project="wasteland">
+            <span class="card-num">01</span>
+            <span class="card-visual"><img decoding="async" loading="lazy" src="assets/wasteland-map-0.jpg" alt="Screenshot from Wasteland Echoes" /></span>
+            <span class="card-rule"></span>
+            <span class="card-title" data-i18n="cardWastelandTitle">Wasteland Echoes</span>
+            <span class="card-body" data-i18n="cardWastelandBody">Set out across the ruins and follow what remains.</span>
+          </button><a class="project-github" href="https://github.com/tuotuo2014/dustline" target="_blank" rel="noopener noreferrer" aria-label="GitHub · dustline">GitHub <span aria-hidden="true">↗</span></a></div>
+          <div class="project-tile" data-s2><button class="card" type="button" data-project="personality">
+            <span class="card-num">02</span>
+            <span class="card-visual personality-preview"><img decoding="async" loading="lazy" src="assets/personality-01.jpg" alt="人格测试结果 · 炼狱杏寿郎" /></span>
+            <span class="card-rule"></span>
+            <span class="card-title" data-i18n="cardPersonalityTitle">Personality Test</span>
+            <span class="card-body" data-i18n="cardPersonalityBody">Explore your personality through Demon Slayer characters.</span>
+          </button><a class="project-github" href="https://github.com/tuotuo2014/personality-test" target="_blank" rel="noopener noreferrer" aria-label="GitHub · personality-test">GitHub <span aria-hidden="true">↗</span></a></div>
+          <div class="project-tile" data-s2><button class="card" type="button" data-project="pixel">
+            <span class="card-num">03</span>
+            <span class="card-visual" role="img" aria-label="Project screenshot pending">
+              <svg viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h3v3h-3zM18 18h2v2h-2z"/><path d="M17 14h3v3h-3z"/></svg>
+            </span>
+            <span class="card-rule"></span>
+            <span class="card-title" data-i18n="cardPixelTitle">Demon Slayer / Pixel Game</span>
+            <span class="card-body" data-i18n="cardPixelBody">A familiar world, reimagined as a pixel adventure.</span>
+          </button><a class="project-github" href="https://github.com/tuotuo2014/demon-slayer-pixel-game" target="_blank" rel="noopener noreferrer" aria-label="GitHub · demon-slayer-pixel-game">GitHub <span aria-hidden="true">↗</span></a></div>
+          <div class="project-tile" data-s2><button class="card" type="button" data-project="novel">
+            <span class="card-num">04</span>
+            <span class="card-visual" role="img" aria-label="Project screenshot pending">
+              <svg viewBox="0 0 24 24"><path d="M4 5.5c3.2-.8 5.8-.2 8 1.6v13c-2.2-1.8-4.8-2.4-8-1.6zM20 5.5c-3.2-.8-5.8-.2-8 1.6v13c2.2-1.8 4.8-2.4 8-1.6z"/><path d="M7 9h2.5M7 12h2.5M15 9h2M15 12h2"/></svg>
+            </span>
+            <span class="card-rule"></span>
+            <span class="card-title" data-i18n="cardNovelTitle">Novel Website</span>
+            <span class="card-body" data-i18n="cardNovelBody">A quiet reading space where stories can unfold.</span>
+          </button><a class="project-github" href="https://github.com/tuotuo2014/novel-website" target="_blank" rel="noopener noreferrer" aria-label="GitHub · novel-website">GitHub <span aria-hidden="true">↗</span></a></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="track" aria-hidden="true"></div>
+
+    <dialog class="project-dialog" aria-labelledby="dialog-title">
+      <button class="lang-toggle dialog-language" data-language-toggle type="button" aria-label="Switch to Chinese"><span class="lang-option" data-language="zh">中</span><span class="lang-divider" aria-hidden="true">/</span><span class="lang-option" data-language="en">EN</span></button>
+      <button class="dialog-close" type="button" aria-label="Close project details">×</button>
+      <p class="dialog-kicker" id="dialog-category"></p>
+      <h2 class="dialog-title" id="dialog-title"></h2>
+      <p class="dialog-description" id="dialog-description"></p>
+      <a class="dialog-github" id="dialog-github" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      <div class="project-gallery" id="project-gallery"></div>
+      <div class="dialog-index"><span id="dialog-index"></span><span>TUOTUO · SELECTED WORKS</span></div>
+    </dialog>
+
+    <script>
+      (() => {
+        let released = false;
+        const release = () => {
+          if (released || !document.documentElement.classList.contains("intro")) return;
+          released = true;
+          requestAnimationFrame(() => document.documentElement.classList.add("intro-go"));
+        };
+        window.releasePortfolioIntro = release;
+        window.setTimeout(release, 2400);
+
+        const dialog = document.querySelector(".project-dialog");
+        const projectContent = {
+          hardware: { en: ["HARDWARE / 3D VIEW", "Chat Box", "A handcrafted chat device with a compact screen, tactile buttons, and a tiny character built into its design.", "00 / OBJECT"], zh: ["硬件 / 3D 展示", "聊天盒子", "一个带有小屏幕、实体按键和手作角色的聊天硬件装置。", "00 / 物件"] },
+          wasteland: { en: ["GAME / STORY", "Wasteland Echoes", "A game set among the ruins. This frame comes from the game itself, with more of its world still waiting to be explored.", "01 / GAME"], zh: ["游戏 / 故事", "废土回响", "一款发生在废墟中的游戏。画面来自游戏本身，还有更多世界等待探索。", "01 / 游戏"] },
+          personality: { en: ["WEB / SELF DISCOVERY", "Personality Test", "A character-themed personality experience, featuring illustrated result pages for Kyojuro Rengoku and Tanjiro Kamado.", "02 / WEBSITE"], zh: ["网页 / 自我探索", "人格测试", "以鬼灭之刃角色呈现性格特质，展示炼狱杏寿郎与灶门炭治郎等角色结果页。", "02 / 网站"] },
+          pixel: { en: ["GAME / PIXEL ACTION", "Demon Slayer / Pixel Game", "A short pixel adventure that brings familiar characters into a compact interactive world.", "03 / GAME"], zh: ["游戏 / 像素动作", "鬼灭之刃 / 像素游戏", "一段短小的像素冒险，让熟悉的角色进入互动世界。", "03 / 游戏"] },
+          novel: { en: ["WEB / READING", "Novel Website", "A quiet online reading space that lets stories and words take the lead.", "04 / WEBSITE"], zh: ["网页 / 阅读", "小说网站", "一个安静的线上阅读空间，让故事和文字成为主角。", "04 / 网站"] }
+        };
+        const languageCopy = {
+          en: {
+            heroKicker: "A PORTFOLIO BY TUOTUO", heroStrong: "MAKE IT REAL.", heroEm: "Make it yours.", metaGames: "GAMES", metaWebsites: "WEBSITES", metaHardware: "HARDWARE",
+            heroTitle: "Ideas into worlds.", heroSubtitle: "Made to be touched.", viewWork: "VIEW WORK", openObject: "OPEN OBJECT", workTitle: "Different worlds.", workSubtitle: "Same curiosity.",
+            microKicker: "CREATIVE PORTFOLIO / 2026", microLeft: "Games, websites & one curious little object.", microRight: "A handmade character, a small screen and an object built to answer back.", workInfo: "From wasteland exploration to pixel action, personality tests and long-form reading; these projects trace my experiments across media.",
+            cardHardwareTitle: "Chat Box / Hardware", cardHardwareBody: "A small object that listens.", cardWastelandTitle: "Wasteland Echoes", cardWastelandBody: "Set out across the ruins and follow what remains.", cardPersonalityTitle: "Personality Test", cardPersonalityBody: "Explore your personality through Demon Slayer characters.", cardPixelTitle: "Demon Slayer / Pixel Game", cardPixelBody: "A familiar world, reimagined as a pixel adventure.", cardNovelTitle: "Novel Website", cardNovelBody: "A quiet reading space where stories can unfold."
+          },
+          zh: {
+            heroKicker: "TUOTUO 的创意作品集", heroStrong: "让想法成真。", heroEm: "做成你自己的世界。", metaGames: "游戏", metaWebsites: "网页", metaHardware: "硬件",
+            heroTitle: "把想法变成世界。", heroSubtitle: "让作品可以被触摸。", viewWork: "查看作品", openObject: "打开物件", workTitle: "不同的世界。", workSubtitle: "同样的好奇心。",
+            microKicker: "创意作品集 / 2026", microLeft: "游戏、网页，还有一个会回应的小物件。", microRight: "一个手作角色、一块小屏幕，以及一个会回应你的物件。", workInfo: "从废土探索到像素动作、人格测试和长篇阅读，这些作品记录了我在不同媒介中的尝试。",
+            cardHardwareTitle: "聊天盒子 / 硬件", cardHardwareBody: "一个会倾听的小物件。", cardWastelandTitle: "废土回响", cardWastelandBody: "穿过废墟，追随那些留下来的痕迹。", cardPersonalityTitle: "人格测试", cardPersonalityBody: "通过鬼灭之刃角色，探索自己的性格。", cardPixelTitle: "鬼灭之刃 / 像素游戏", cardPixelBody: "让熟悉的世界重新成为一场像素冒险。", cardNovelTitle: "小说网站", cardNovelBody: "一个安静的阅读空间，让故事自然展开。"
+          }
+        };
+        let language = "en";
+        const languageButtons = [...document.querySelectorAll("[data-language-toggle]")];
+        const applyLanguage = (nextLanguage) => {
+          language = nextLanguage;
+          document.documentElement.dataset.lang = language;
+          document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+          const copy = languageCopy[language];
+          document.title = language === "en" ? "TUOTUO — Creative Portfolio" : "TUOTUO — 创意作品集";
+          document.querySelector('meta[name="description"]').setAttribute("content", language === "en" ? "TUOTUO's creative portfolio of games, websites, and interactive hardware." : "TUOTUO 的游戏、网页与互动硬件创意作品集。");
+          document.querySelectorAll("[data-i18n]").forEach((element) => {
+            if (copy[element.dataset.i18n]) element.textContent = copy[element.dataset.i18n];
+          });
+          languageButtons.forEach((button) => {
+            button.setAttribute("aria-label", language === "en" ? "切换到中文 / Switch to Chinese" : "Switch to English / 切换到英文");
+            button.title = language === "en" ? "切换到中文" : "Switch to English";
+          });
+          try { localStorage.setItem("tuotuo-language", language); } catch (_) {}
+          document.querySelector(".pill").textContent = copy.viewWork;
+          document.querySelector(".menu").setAttribute("aria-label", language === "en" ? "Open selected works" : "打开精选作品");
+          document.querySelector(".menu > span:last-child").textContent = language === "en" ? "Menu" : "菜单";
+          document.querySelector(".menu").title = copy.viewWork;
+          document.querySelector(".logo").setAttribute("aria-label", language === "en" ? "TUOTUO home" : "TUOTUO 首页");
+          document.querySelector(".nav-right").setAttribute("aria-label", language === "en" ? "Main navigation" : "主导航");
+          document.querySelector(".hero-center-english").setAttribute("aria-label", language === "en" ? "TUOTUO creative portfolio" : "TUOTUO 创意作品集");
+          document.querySelector("#hardware3d-slot").setAttribute("aria-label", language === "en" ? "Drag to rotate the Chat Box model" : "拖动以旋转聊天盒子模型");
+          document.querySelector('[data-project="wasteland"] .card-visual img').alt = language === "en" ? "Screenshot from Wasteland Echoes" : "废土回响游戏画面";
+          document.querySelector(".dialog-index > span:last-child").textContent = language === "en" ? "TUOTUO · SELECTED WORKS" : "TUOTUO · 精选作品";
+          document.querySelector(".cards").setAttribute("aria-label", language === "en" ? "Selected works" : "精选作品");
+          const projectLabels = language === "en" ? { hardware: "Open Chat Box hardware project", wasteland: "Open Wasteland Echoes project", personality: "Open Personality Test project", pixel: "Open Demon Slayer pixel game project", novel: "Open Novel Website project" } : { hardware: "打开聊天盒子硬件项目", wasteland: "打开废土回响项目", personality: "打开人格测试项目", pixel: "打开鬼灭之刃像素游戏项目", novel: "打开小说网站项目" };
+          document.querySelectorAll("[data-project]").forEach((item) => { if (projectLabels[item.dataset.project]) item.setAttribute("aria-label", projectLabels[item.dataset.project]); });
+          document.querySelector(".dialog-close").setAttribute("aria-label", language === "en" ? "Close project details" : "关闭项目介绍");
+          document.querySelector("#dialog-category").textContent = "";
+          window.refreshInkLetters?.();
+          if (dialog.open && dialog.dataset.project) fillDialog(dialog.dataset.project);
+        };
+
+        const projectImages = {"hardware": [["assets/hardware-01.jpg", "Hardware photograph 1", "硬件实物照片 1"], ["assets/hardware-02.jpg", "Hardware photograph 2", "硬件实物照片 2"], ["assets/hardware-03.jpg", "Hardware photograph 3", "硬件实物照片 3"], ["assets/hardware-04.jpg", "Hardware photograph 4", "硬件实物照片 4"], ["assets/hardware-05.jpg", "Hardware photograph 5", "硬件实物照片 5"], ["assets/hardware-06.jpg", "Hardware photograph 6", "硬件实物照片 6"], ["assets/hardware-07.jpg", "Hardware photograph 7", "硬件实物照片 7"], ["assets/hardware-08.jpg", "Hardware photograph 8", "硬件实物照片 8"]], "wasteland": [["assets/wasteland.jpg", "Game start screen", "游戏开始界面"], ["assets/wasteland-map-0.jpg", "Game capture — Overpass", "游戏实机 · 断桥荒原"], ["assets/wasteland-map-1.jpg", "Game capture — Rustworks", "游戏实机 · 锈海工业区"], ["assets/wasteland-map-2.jpg", "Game capture — Buried City", "游戏实机 · 沙埋旧都"], ["assets/wasteland-map-3.jpg", "Game capture — Dusk Settlement", "游戏实机 · 暮火聚落"]], "personality": [["assets/personality-01.jpg", "Personality result — Kyojuro Rengoku", "人格测试结果 · 炼狱杏寿郎"], ["assets/personality-02.jpg", "Personality result — Tanjiro Kamado", "人格测试结果 · 灶门炭治郎"]]};
+        const renderProjectGallery = (project) => {
+          const gallery = document.querySelector('#project-gallery');
+          gallery.replaceChildren();
+          gallery.dataset.project = project;
+          const items = projectImages[project] || [];
+          if (!items.length) {
+            const note = document.createElement('p'); note.className = 'gallery-note';
+            note.textContent = language === 'zh' ? '项目截图待补充。' : 'Project screenshots coming soon.';
+            gallery.append(note); return;
+          }
+          items.forEach(([src,en,zh],index) => {
+            const figure = document.createElement('figure');
+            const img = document.createElement('img'); img.src = src; img.alt = language === 'zh' ? zh : en;
+            img.loading = index ? 'lazy' : 'eager'; img.decoding = 'async';
+            const caption = document.createElement('figcaption'); caption.textContent = img.alt;
+            figure.append(img,caption); gallery.append(figure);
+          });
+        };
+
+        const fillDialog = (project) => {
+          const data = projectContent[project]?.[language];
+          if (!data) return;
+          document.querySelector("#dialog-category").textContent = data[0];
+          document.querySelector("#dialog-title").textContent = data[1];
+          document.querySelector("#dialog-description").textContent = data[2];
+          document.querySelector("#dialog-index").textContent = data[3];
+          document.querySelector("#dialog-github").href = "https://github.com/tuotuo2014/" + {"hardware": "chat-box", "wasteland": "dustline", "personality": "personality-test", "pixel": "demon-slayer-pixel-game", "novel": "novel-website"}[project];
+          renderProjectGallery(project);
+        };
+        languageButtons.forEach((button) => button.addEventListener("click", () => applyLanguage(language === "en" ? "zh" : "en")));
+        let savedLanguage = "en";
+        try { if (localStorage.getItem("tuotuo-language") === "zh") savedLanguage = "zh"; } catch (_) {}
+        applyLanguage(savedLanguage);
+        document.querySelectorAll("[data-project]").forEach((item) => {
+          item.addEventListener("click", () => {
+            if (!projectContent[item.dataset.project]) return;
+            dialog.dataset.project = item.dataset.project;
+            fillDialog(item.dataset.project);
+            dialog.showModal();
+          });
+        });
+        document.querySelector(".dialog-close").addEventListener("click", () => dialog.close());
+        dialog.addEventListener("click", (event) => {
+          const rect = dialog.getBoundingClientRect();
+          if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) dialog.close();
+        });
+        document.querySelectorAll("[data-scroll-to]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const end = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+            window.scrollTo({ top: end * Number(button.dataset.scrollTo), behavior: "smooth" });
+          });
+        });
+
+        const root = document.documentElement;
+        const nav = document.querySelector("#nav");
+        const stage = document.querySelector("#stage");
+        const scene1 = document.querySelector("#scene1");
+        const scene2 = document.querySelector("#scene2");
+        const s2Items = [...scene2.querySelectorAll("[data-s2]")];
+        const s2Applied = s2Items.map(() => false);
+        let cardGap = 24;
+        let cardRadius = 16;
+        let navHeight = 88;
+        let lastFrame = performance.now();
+        let lastApplied = -1;
+        let lastP = -1;
+        let smoothExp = 0;
+        let idle = 0;
+        let scrollRotation = 0;
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const clamp01 = (n) => Math.min(1, Math.max(0, n));
+        const ease = (n) => { n = clamp01(n); return n * n * n * (n * (n * 6 - 15) + 10); };
+        const range = (p, a, b) => ease((p - a) / (b - a));
+        const mix = (a, b, t) => `rgba(${Math.round(a[0] + (b[0] - a[0]) * t)},${Math.round(a[1] + (b[1] - a[1]) * t)},${Math.round(a[2] + (b[2] - a[2]) * t)},${(a[3] + (b[3] - a[3]) * t).toFixed(3)})`;
+        const readGeom = () => {
+          const css = getComputedStyle(root);
+          cardGap = parseFloat(css.getPropertyValue("--card-gap")) || 24;
+          cardRadius = parseFloat(css.getPropertyValue("--card-r")) || 16;
+          navHeight = nav.offsetHeight || 88;
+        };
+        const progress = () => {
+          const max = root.scrollHeight - innerHeight;
+          return max > 0 ? clamp01(scrollY / max) : 0;
+        };
+        readGeom();
+        window.addEventListener("resize", readGeom, { passive: true });
+        scene2.style.visibility = "hidden";
+        s2Items.forEach((item) => { item.style.opacity = "0"; });
+
+        let scrollRaf = 0;
+        function wakeScroll() { if (!scrollRaf && !document.hidden) scrollRaf = requestAnimationFrame(frame); }
+        const frame = (now) => {
+          scrollRaf = 0;
+          const dt = Math.min((now - lastFrame) / 1000, .05);
+          lastFrame = now;
+          const k = reduced ? 1 : 1 - Math.exp(-dt * 7.5);
+          const p = progress();
+          const expansion = range(p, .10, .38);
+          const busy = p !== lastP || Math.abs(expansion - smoothExp) > .0015;
+          lastP = p;
+          idle = busy ? 0 : idle + 1;
+          if (idle > 3) return;
+
+          smoothExp += (expansion - smoothExp) * k;
+          const e = smoothExp;
+          const ie = 1 - e;
+          root.style.setProperty("--inset-x", `${cardGap * ie}px`);
+          root.style.setProperty("--inset-t", `${(navHeight + cardGap * .34) * ie}px`);
+          root.style.setProperty("--radius", `${cardRadius * ie}px`);
+          root.style.setProperty("--nav-ink", mix([26,26,30,1], [255,255,255,1], e));
+          root.style.setProperty("--nav-accent", mix([139,144,168,1], [255,255,255,.70], e));
+          root.style.setProperty("--nav-icon", mix([124,129,155,1], [255,255,255,1], e));
+          root.style.setProperty("--pill-bg", mix([124,129,155,1], [255,255,255,1], e));
+          root.style.setProperty("--pill-ink", mix([255,255,255,1], [26,26,30,1], e));
+
+          const out1 = range(p, .20, .45);
+          scene1.style.opacity = String(1 - out1);
+          scene1.style.transform = out1 <= .002 ? "none" : `translate3d(0,${-52 * out1}px,0)`;
+          scene1.style.filter = out1 <= .002 ? "none" : `blur(${out1 * 7}px)`;
+          scene1.style.visibility = out1 >= .999 ? "hidden" : "visible";
+
+          const in2 = range(p, .62, .88);
+          scene2.style.visibility = in2 <= .001 ? "hidden" : "visible";
+          const step = .07;
+          const span = 1 - step * (s2Items.length - 1);
+          s2Items.forEach((item, i) => {
+            const t = ease((in2 - i * step) / span);
+            if (t >= .998) {
+              if (!s2Applied[i]) { item.style.opacity = ""; item.style.transform = ""; s2Applied[i] = true; }
+            } else {
+              item.style.opacity = String(t);
+              item.style.transform = `translate3d(0,${30 * (1 - t)}px,0)`;
+              s2Applied[i] = false;
+            }
+          });
+          const rotationTarget = p * Math.PI * .43;
+          scrollRotation += (rotationTarget - scrollRotation) * k;
+          window.portfolioScrollRotation = scrollRotation;
+          wakeScroll();
+        };
+        wakeScroll();
+        window.addEventListener("scroll", wakeScroll, {passive:true});
+        window.addEventListener("resize", () => { idle = 0; wakeScroll(); }, {passive:true});
+        document.addEventListener("visibilitychange", () => { idle = 0; wakeScroll(); });
+        stage.dataset.ready = "pending";
+      })();
+    </script>
+
+    <script>
+      (() => {
+        const canvas = document.querySelector("#ink-canvas");
+        const context = canvas.getContext("2d");
+        const stage = document.querySelector("#stage");
+        const root = document.documentElement;
+        const dialog = document.querySelector(".project-dialog");
+        if (!context || !stage) return;
+
+        const motion = matchMedia("(prefers-reduced-motion: reduce)");
+        const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
+        const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+        let words = [];
+        let letters = [];
+        let geometryDirty = true;
+        let width = 1;
+        let height = 1;
+        let pointerInside = false;
+        let touch = false;
+        let targetX = 0;
+        let targetY = 0;
+        let x = 0;
+        let y = 0;
+        let visibility = 0;
+        let lastTime = 0;
+        let lastMeasure = 0;
+        let lastTouch = 0;
+        let raf = 0;
+        let cursorHidden = false;
+        const trail = [];
+
+        // Keep complete English words together and allow Chinese to wrap naturally.
+        const wrapLetters = () => {
+          words = [];
+          letters = [];
+          document.querySelectorAll(".hero-center-english strong, .hero-center-english em, .h-line1, .h-line2").forEach((element) => {
+            const text = element.textContent;
+            element.replaceChildren();
+            const fragment = document.createDocumentFragment();
+            const tokens = text.match(/[A-Za-z0-9]+(?:['’.-][A-Za-z0-9]+)*[.,!?;:]?|\s+|[^\s]/gu) || [];
+            tokens.forEach((token) => {
+              if (/^\s+$/.test(token)) {
+                fragment.append(document.createTextNode(token));
+                return;
+              }
+              const word = document.createElement("span");
+              word.className = "ink-word";
+              const entry = { element: word, host: element, letters: [], rect: null, color: [255,255,255] };
+              for (const character of token) {
+                const letter = document.createElement("span");
+                letter.className = "ink-letter";
+                letter.textContent = character;
+                word.append(letter);
+                const glyph = { element: letter, parent: entry, left: 0, top: 0, amount: 0, changed: false, phase: letters.length * .47 };
+                letters.push(glyph);
+                entry.letters.push(glyph);
+              }
+              words.push(entry);
+              fragment.append(word);
+            });
+            element.append(fragment);
+          });
+          geometryDirty = true;
+          wake();
+        };
+        const resize = () => {
+          width = innerWidth;
+          height = innerHeight;
+          const ratio = Math.min(devicePixelRatio || 1, 1);
+          canvas.width = Math.round(width * ratio);
+          canvas.height = Math.round(height * ratio);
+          context.setTransform(ratio, 0, 0, ratio, 0, 0);
+          geometryDirty = true;
+          wake();
+        };
+        const measure = (now) => {
+          if (!geometryDirty && now - lastMeasure < 120) return;
+          const fullMeasure = geometryDirty;
+          geometryDirty = false;
+          lastMeasure = now;
+          const colors = new Map();
+          words.forEach((word) => {
+            const scene = word.host.closest(".scene");
+            word.rect = scene?.style.visibility === "hidden" ? null : word.element.getBoundingClientRect();
+            if (!fullMeasure) return;
+            if (!colors.has(word.host)) {
+              const rgb = getComputedStyle(word.host).color.match(/[\d.]+/g) || [255,255,255];
+              colors.set(word.host, rgb.slice(0,3).map(Number));
+            }
+            word.color = colors.get(word.host);
+            word.letters.forEach((letter) => {
+              letter.left = letter.element.offsetLeft + letter.element.offsetWidth / 2;
+              letter.top = letter.element.offsetTop + letter.element.offsetHeight / 2;
+            });
+          });
+        };
+        const stop = () => {
+          pointerInside = false;
+          root.classList.remove("gravity-active");
+          cursorHidden = false;
+          wake();
+        };
+        const move = (event) => {
+          const rect = stage.getBoundingClientRect();
+          if (dialog.open || event.target.closest?.("#nav, #hardware3d-slot") || event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+            stop();
+            return;
+          }
+          touch = event.pointerType === "touch";
+          if (touch && !event.buttons && event.type !== "pointerdown") return;
+          if (!pointerInside) {
+            x = event.clientX;
+            y = event.clientY;
+            trail.length = 0;
+          }
+          targetX = event.clientX;
+          targetY = event.clientY;
+          pointerInside = true;
+          if (touch) lastTouch = performance.now();
+          wake();
+        };
+        const paintHole = (now) => {
+          const radius = touch ? 23 : 26;
+          const scale = touch ? .78 : 1;
+          context.save();
+          context.translate(x, y);
+          context.scale(scale, scale);
+          const glow = context.createRadialGradient(0,0,12,0,0,105);
+          glow.addColorStop(0,"rgba(8,9,17,.55)");
+          glow.addColorStop(.4,"rgba(136,109,193,.22)");
+          glow.addColorStop(1,"rgba(136,109,193,0)");
+          context.fillStyle = glow;
+          context.fillRect(-110,-110,220,220);
+          context.rotate(-.24);
+          const ring = (front) => {
+            context.save();
+            context.scale(1,.35);
+            context.shadowColor = "#b1a2eb";
+            context.shadowBlur = 9;
+            const disk = context.createLinearGradient(-72,0,72,0);
+            disk.addColorStop(0,"rgba(159,135,215,.12)");
+            disk.addColorStop(.38,"rgba(211,198,255,.8)");
+            disk.addColorStop(.64,"rgba(225,241,165,.95)");
+            disk.addColorStop(1,"rgba(159,135,215,.16)");
+            context.strokeStyle = disk;
+            [58,64,71].forEach((r,i) => {
+              context.lineWidth = i === 1 ? 2.8 : .8;
+              context.beginPath();
+              context.arc(0,0,r,front ? 0 : Math.PI,front ? Math.PI : Math.PI * 2);
+              context.stroke();
+            });
+            context.restore();
+          };
+          ring(false);
+          context.shadowColor = "#b4a9e4";
+          context.shadowBlur = 8;
+          context.strokeStyle = "rgba(223,214,255,.65)";
+          context.lineWidth = 1.1;
+          context.beginPath();
+          context.arc(0,0,radius + 2,0,Math.PI * 2);
+          context.stroke();
+          context.shadowBlur = 0;
+          context.fillStyle = "#03040a";
+          context.beginPath();
+          context.arc(0,0,radius,0,Math.PI * 2);
+          context.fill();
+          ring(true);
+          if (!motion.matches) {
+            for (let i = 0; i < 7; i++) {
+              const angle = now * .00045 + i * 2.4;
+              const r = 45 + (i % 3) * 12;
+              context.fillStyle = `rgba(220,212,247,${.22 + (i % 3) * .12})`;
+              context.beginPath();
+              context.arc(Math.cos(angle) * r,Math.sin(angle) * r * .35, .8,0,Math.PI * 2);
+              context.fill();
+            }
+          }
+          context.restore();
+        };
+        const frame = (now) => {
+          raf = 0;
+          if (lastTime && now - lastTime < 1000 / 60 - 1) { wake(); return; }
+          const dt = Math.min(.05,(now - (lastTime || now - 16)) / 1000);
+          lastTime = now;
+          if (dialog.open || document.hidden || (touch && now - lastTouch > 650)) pointerInside = false;
+          visibility += ((pointerInside ? 1 : 0) - visibility) * (1 - Math.exp(-dt * 11));
+          const hideCursor = pointerInside && finePointer.matches;
+          if (hideCursor !== cursorHidden) {
+            root.classList.toggle("gravity-active", hideCursor);
+            cursorHidden = hideCursor;
+          }
+          const smoothing = 1 - Math.exp(-dt * (motion.matches ? 30 : 19));
+          x += (targetX - x) * smoothing;
+          y += (targetY - y) * smoothing;
+          context.clearRect(0,0,width,height);
+          canvas.style.opacity = visibility.toFixed(3);
+          if (visibility > .008) {
+            measure(now);
+            if (!motion.matches && pointerInside && (!trail.length || Math.hypot(x-trail[0].x,y-trail[0].y) > 9)) trail.unshift({x,y,time:now});
+            while (trail.length && (now - trail[trail.length-1].time > 320 || trail.length > 12)) trail.pop();
+            trail.forEach((point,i) => {
+              const alpha = Math.max(0,1-(now-point.time)/320) * .12;
+              context.fillStyle = `rgba(109,94,160,${alpha})`;
+              context.beginPath();
+              context.arc(point.x,point.y,Math.max(3,17-i),0,Math.PI*2);
+              context.fill();
+            });
+            paintHole(now);
+          }
+          let movingLetters = false;
+          const influence = touch ? 105 : 148;
+          const response = 1 - Math.exp(-dt * 14);
+          letters.forEach((letter) => {
+            const rect = letter.parent.rect;
+            let strength = 0;
+            let dx = 0;
+            let dy = 0;
+            let distance = 0;
+            if (pointerInside && rect && rect.width && rect.height) {
+              dx = rect.left + letter.left - x;
+              dy = rect.top + letter.top - y;
+              distance = Math.hypot(dx,dy);
+              const falloff = clamp(1-distance/influence,0,1);
+              strength = falloff * falloff;
+            }
+            letter.amount += (strength-letter.amount) * response;
+            if (letter.amount < .002) {
+              if (letter.changed) {
+                letter.element.style.transform = "";
+                letter.element.style.color = "";
+                letter.changed = false;
+              }
+              return;
+            }
+            movingLetters = true;
+            const power = letter.amount;
+            const color = letter.parent.color.map((value,i) => Math.round(value + ([214,241,160][i]-value) * power));
+            letter.element.style.color = `rgb(${color.join(",")})`;
+            if (!motion.matches) {
+              const angle = Math.atan2(dy,dx);
+              const suction = Math.min(distance * .3, 22) * power;
+              const swirl = Math.sin(angle + now * .0018 + letter.phase) * power;
+              const tx = -Math.cos(angle)*suction - Math.sin(angle)*swirl*7;
+              const ty = -Math.sin(angle)*suction + Math.cos(angle)*swirl*7;
+              letter.element.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) rotate(${(swirl*17).toFixed(2)}deg) skewX(${(swirl*11).toFixed(2)}deg) scale(${(1+power*.18).toFixed(3)},${(1-power*.12).toFixed(3)})`;
+            }
+            letter.changed = true;
+          });
+          if (pointerInside || visibility > .008 || movingLetters) wake();
+          else { context.clearRect(0,0,width,height); lastTime = 0; }
+        };
+        function wake() { if (!raf) raf = requestAnimationFrame(frame); }
+        window.refreshInkLetters = wrapLetters;
+        wrapLetters();
+        resize();
+        window.addEventListener("pointermove",move,{passive:true});
+        window.addEventListener("pointerdown",move,{passive:true});
+        window.addEventListener("pointerup",event => { if (event.pointerType === "touch") stop(); },{passive:true});
+        window.addEventListener("pointercancel",stop,{passive:true});
+        document.documentElement.addEventListener("pointerleave",stop,{passive:true});
+        window.addEventListener("blur",stop);
+        window.addEventListener("resize",resize,{passive:true});
+        window.addEventListener("scroll",() => { geometryDirty = true; stop(); },{passive:true});
+        document.querySelector(".cards").addEventListener("scroll",() => { geometryDirty = true; stop(); },{passive:true});
+        document.addEventListener("visibilitychange",stop);
+        document.fonts?.ready.then(() => { geometryDirty = true; wake(); });
+      })();
+    </script>
+
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+      (() => {
+        const canvas = document.querySelector("#hardware3d");
+        const slot = document.querySelector("#hardware3d-slot");
+        const stage = document.querySelector("#stage");
+        const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        let renderer;
+        try {
+          renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "low-power" });
+        } catch (error) {
+          stage.dataset.ready = "webgl-unavailable";
+          window.releasePortfolioIntro?.();
+          return;
+        }
+        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.25));
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.15;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color("#343a46");
+        scene.fog = new THREE.Fog("#343a46", 8, 18);
+        const camera = new THREE.PerspectiveCamera(32, 1, .1, 60);
+        camera.position.set(0, 2.35, 7.1);
+        camera.lookAt(0, 1.65, 0);
+        scene.add(new THREE.HemisphereLight(0xf5e9dc, 0x34313d, 2.1));
+        const key = new THREE.DirectionalLight(0xfff7ed, 3.1);
+        key.position.set(-4.5, 7, 6);
+        key.castShadow = true;
+        key.shadow.mapSize.set(512, 512);
+        key.shadow.camera.left = -6;
+        key.shadow.camera.right = 6;
+        key.shadow.camera.top = 8;
+        key.shadow.camera.bottom = -4;
+        key.shadow.bias = -.0005;
+        scene.add(key);
+        const rim = new THREE.DirectionalLight(0xe2e7ff, 1.6);
+        rim.position.set(5, 4, -4);
+        scene.add(rim);
+
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), new THREE.ShadowMaterial({ color: 0x222333, opacity: .23 }));
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -.03;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        const rootGroup = new THREE.Group();
+        const product = new THREE.Group();
+        const photoGallery = new THREE.Group();
+        rootGroup.add(product, photoGallery);
+        scene.add(rootGroup);
+        const standard = (color, roughness = .72, metalness = .05) => new THREE.MeshStandardMaterial({ color, roughness, metalness });
+        const shellMat = standard(0x191a1d, .56, .14);
+        const edgeMat = standard(0x303137, .55, .2);
+        const redMat = standard(0xc51a43, .45, .12);
+        const darkScreen = new THREE.MeshPhysicalMaterial({ color: 0x0b0c10, roughness: .22, metalness: .18, clearcoat: .85, clearcoatRoughness: .18 });
+        const coatMat = standard(0x797b7a, .93, 0);
+        const skinMat = standard(0xc7a78e, .86, 0);
+        const hairMat = standard(0xc9143e, .58, .02);
+        const hairDark = standard(0x271a23, .72, 0);
+        const goldMat = standard(0xe1ab25, .45, .16);
+
+        const addMesh = (parent, geometry, material, position, scale, rotation) => {
+          const mesh = new THREE.Mesh(geometry, material);
+          if (position) mesh.position.set(...position);
+          if (scale) mesh.scale.set(...scale);
+          if (rotation) mesh.rotation.set(...rotation);
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          parent.add(mesh);
+          return mesh;
+        };
+        const box = (parent, size, material, position, rotation) => addMesh(parent, new THREE.BoxGeometry(...size), material, position, null, rotation);
+        const sphere = (parent, radius, material, position, scale, detail = 2) => addMesh(parent, new THREE.IcosahedronGeometry(radius, detail), material, position, scale);
+        const capsule = (parent, radius, length, material, position, rotation, scale) => addMesh(parent, new THREE.CapsuleGeometry(radius, length, 5, 10), material, position, scale, rotation);
+
+        // Compact display enclosure with a red screen bezel and two tactile keys.
+        box(product, [2.18, 1.5, 1.72], shellMat, [0, .76, 0]);
+        box(product, [2.03, .1, 1.58], edgeMat, [0, .09, .02]);
+        box(product, [1.56, 1.02, .08], redMat, [0, .82, .89]);
+        box(product, [1.32, .78, .095], edgeMat, [0, .82, .94]);
+        box(product, [1.17, .63, .035], darkScreen, [0, .82, 1.0]);
+        box(product, [.035, .46, .012], standard(0x7f2b40, .62), [-.47, .82, 1.023]);
+        const screenGlow = new THREE.PointLight(0x69243a, .6, 2.4);
+        screenGlow.position.set(0, .85, 1.16);
+        product.add(screenGlow);
+
+        const buttonRed = new THREE.Mesh(new THREE.CylinderGeometry(.13, .14, .12, 24), redMat);
+        buttonRed.position.set(-.25, 1.58, .22);
+        buttonRed.castShadow = true;
+        product.add(buttonRed);
+        const buttonGold = new THREE.Mesh(new THREE.CylinderGeometry(.13, .14, .12, 24), goldMat);
+        buttonGold.position.set(.13, 1.58, .22);
+        buttonGold.castShadow = true;
+        product.add(buttonGold);
+        const smallPort = box(product, [.22, .07, .035], edgeMat, [.72, .42, .89]);
+        smallPort.material = edgeMat;
+
+        // Handmade character silhouette based on the supplied multi-angle photos.
+        capsule(product, .33, .58, coatMat, [0, 2.03, -.01], [0, 0, -.04], [1.35, 1, .88]);
+        sphere(product, .31, skinMat, [0, 2.76, .05], [.82, 1.03, .77], 3);
+        sphere(product, .365, hairMat, [0, 2.99, .045], [1.16, .72, .94], 2);
+        sphere(product, .19, hairMat, [-.27, 2.83, .22], [1, 1.35, .8], 1);
+        sphere(product, .18, hairMat, [.25, 2.8, .21], [1.1, 1.3, .82], 1);
+        const spikeGeo = new THREE.ConeGeometry(.12, .42, 5);
+        addMesh(product, spikeGeo, hairMat, [-.22, 3.18, .03], null, [0, 0, -.28]);
+        addMesh(product, spikeGeo, hairMat, [.04, 3.2, -.04], null, [0, 0, .14]);
+        addMesh(product, spikeGeo, hairMat, [.26, 3.12, .02], null, [0, 0, .45]);
+        addMesh(product, new THREE.ConeGeometry(.09, .34, 5), hairDark, [-.24, 3.2, -.01], null, [0, 0, -.42]);
+        addMesh(product, new THREE.ConeGeometry(.09, .31, 5), hairDark, [.27, 3.18, -.03], null, [0, 0, .42]);
+        sphere(product, .027, hairDark, [-.09, 2.78, .286], [1, .75, .6], 1);
+        sphere(product, .027, hairDark, [.095, 2.78, .286], [1, .75, .6], 1);
+        box(product, [.075, .022, .018], hairDark, [0, 2.66, .30]);
+        capsule(product, .105, .43, coatMat, [-.39, 2.16, .06], [0, 0, -.56], [1, 1, 1]);
+        capsule(product, .105, .38, coatMat, [.38, 2.34, .04], [0, 0, .46], [1, 1, 1]);
+        sphere(product, .105, skinMat, [-.57, 2.39, .13], [1, 1.04, 1], 1);
+        sphere(product, .105, skinMat, [.48, 2.62, .13], [1, 1.04, 1], 1);
+        box(product, [.83, .34, .07], redMat, [0, 2.16, .41], [0, -.04, -.04]);
+
+        const makeLabel = () => {
+          const c = document.createElement("canvas");
+          c.width = 512;
+          c.height = 180;
+          const ctx = c.getContext("2d");
+          ctx.fillStyle = "#c9143e";
+          ctx.fillRect(0, 0, c.width, c.height);
+          ctx.fillStyle = "#18191b";
+          ctx.font = "700 98px Inter, Arial, sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("HELLO", 256, 92);
+          const texture = new THREE.CanvasTexture(c);
+          texture.colorSpace = THREE.SRGBColorSpace;
+          return new THREE.MeshBasicMaterial({ map: texture, toneMapped: false });
+        };
+        addMesh(product, new THREE.PlaneGeometry(.76, .27), makeLabel(), [0, 2.16, .45]);
+
+        const loader = new THREE.TextureLoader();
+        const photoAssets = {"hardware-01.jpg":"assets/hardware-texture-01.jpg","hardware-02.jpg":"assets/hardware-texture-02.jpg","hardware-03.jpg":"assets/hardware-texture-03.jpg","hardware-04.jpg":"assets/hardware-texture-04.jpg","hardware-05.jpg":"assets/hardware-texture-05.jpg","hardware-06.jpg":"assets/hardware-texture-06.jpg","hardware-07.jpg":"assets/hardware-texture-07.jpg","hardware-08.jpg":"assets/hardware-texture-08.jpg"};
+        const photoFiles = Object.keys(photoAssets);
+        photoFiles.forEach((file, i) => {
+          const angle = Math.PI / 8 + i * Math.PI / 4;
+          const radius = 3.55;
+          const tile = new THREE.Group();
+          tile.position.set(Math.sin(angle) * radius, 1.65 + Math.sin(i * 1.7) * .42, Math.cos(angle) * radius);
+          tile.lookAt(0, 1.78, 0);
+          addMesh(tile, new THREE.BoxGeometry(1.14, .88, .055), new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: .75 }), [0, 0, 0]);
+          const texture = loader.load(photoAssets[file], () => wakeModel());
+          texture.colorSpace = THREE.SRGBColorSpace;
+          texture.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 2);
+          const photo = new THREE.Mesh(new THREE.PlaneGeometry(1.07, .81), new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, toneMapped: false }));
+          photo.position.z = .031;
+          tile.add(photo);
+          photoGallery.add(tile);
+        });
+
+        const groundMat = floor.material;
+        const pointer = { down: false, id: -1, x: 0, y: 0, startX: 0, startY: 0, moved: false, suppressClick: false, vx: 0, vy: 0, yaw: 0, pitch: -.04 };
+        let autoYaw = 0;
+        let modelRaf = 0;
+        function wakeModel() { if (!modelRaf && !document.hidden) modelRaf = requestAnimationFrame(renderModel); }
+        let lastTime = performance.now();
+        const resize = () => {
+          const width = Math.max(1, slot.clientWidth);
+          const height = Math.max(1, slot.clientHeight);
+          renderer.setSize(width, height, false);
+          camera.aspect = width / height;
+          const compact = width < 720;
+          camera.position.set(0, compact ? 2.35 : 2.5, compact ? 7.1 : 7.6);
+          camera.lookAt(0, 1.65, 0);
+          product.scale.setScalar(compact ? .85 : 1);
+          photoGallery.scale.setScalar(compact ? .7 : 1);
+          photoGallery.position.y = compact ? .12 : 0;
+          camera.updateProjectionMatrix();
+          wakeModel();
+        };
+        resize();
+        new ResizeObserver(resize).observe(slot);
+        window.addEventListener("resize", resize, { passive: true });
+
+        canvas.addEventListener("pointerdown", (event) => {
+          pointer.down = true;
+          pointer.id = event.pointerId;
+          pointer.x = event.clientX;
+          pointer.y = event.clientY;
+          pointer.startX = event.clientX;
+          pointer.startY = event.clientY;
+          pointer.moved = false;
+          canvas.setPointerCapture(event.pointerId);
+          wakeModel();
+        });
+        canvas.addEventListener("pointermove", (event) => {
+          if (!pointer.down || event.pointerId !== pointer.id) return;
+          const dx = event.clientX - pointer.x;
+          const dy = event.clientY - pointer.y;
+          if (Math.hypot(event.clientX - pointer.startX, event.clientY - pointer.startY) > 5) pointer.moved = true;
+          pointer.x = event.clientX;
+          pointer.y = event.clientY;
+          pointer.yaw += dx * .008;
+          wakeModel();
+          pointer.vx = dx * .0007;
+          if (event.pointerType !== "touch") {
+            pointer.pitch = THREE.MathUtils.clamp(pointer.pitch + dy * .006, -.48, .48);
+            pointer.vy = dy * .00045;
+          }
+        });
+        const stopDrag = (event) => {
+          if (event.pointerId !== pointer.id) return;
+          pointer.suppressClick = pointer.moved;
+          if (pointer.suppressClick) window.setTimeout(() => { pointer.suppressClick = false; }, 0);
+          pointer.down = false;
+          pointer.id = -1;
+        };
+        canvas.addEventListener("click", (event) => {
+          if (!pointer.suppressClick) return;
+          event.preventDefault();
+          event.stopPropagation();
+          pointer.suppressClick = false;
+        });
+        canvas.addEventListener("pointerup", stopDrag);
+        canvas.addEventListener("pointercancel", stopDrag);
+        canvas.addEventListener("lostpointercapture", () => { pointer.down = false; pointer.id = -1; });
+
+        function renderModel(now) {
+          modelRaf = 0;
+          const rect = slot.getBoundingClientRect();
+          if (document.hidden || slot.closest(".scene").style.visibility === "hidden" || rect.right < 0 || rect.left > innerWidth || rect.bottom < 0 || rect.top > innerHeight) return;
+          const dt = Math.min((now - lastTime) / 1000, .05);
+          lastTime = now;
+          const visible = slot.closest(".scene").style.visibility !== "hidden";
+          if (!pointer.down) {
+            pointer.yaw += pointer.vx;
+            pointer.pitch = THREE.MathUtils.clamp(pointer.pitch + pointer.vy, -.48, .48);
+            pointer.vx *= .92;
+            pointer.vy *= .92;
+
+          }
+          rootGroup.rotation.y = (window.portfolioScrollRotation || 0) + pointer.yaw + autoYaw;
+          rootGroup.rotation.x = pointer.pitch;
+          if (visible) renderer.render(scene, camera);
+          if (visible && stage.dataset.ready !== "ready") {
+            stage.dataset.ready = "ready";
+            window.releasePortfolioIntro?.();
+          }
+          if (pointer.down || Math.abs(pointer.vx) + Math.abs(pointer.vy) > .0001) wakeModel();
+        }
+        window.addEventListener("scroll", wakeModel, {passive:true});
+        document.querySelector(".cards").addEventListener("scroll", wakeModel, {passive:true});
+        document.addEventListener("visibilitychange", wakeModel);
+        new IntersectionObserver(() => wakeModel()).observe(slot);
+        wakeModel();
+      })();
+    </script>
+  </body>
+</html>
